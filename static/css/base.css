@@ -49,6 +49,11 @@ img.logo {
     width: 5rem;
 }
 
+.active {
+    border-bottom: 2px solid var(--blue);
+    font-weight: 500;
+}
+
 /* Footer */
 
 footer {
@@ -64,4 +69,38 @@ footer {
 .social-icon {
     height: 2rem;
     margin: 1rem;
+}
+
+/* Form */
+
+.form {
+    width: 50rem;
+    margin: 3% auto;
+    box-shadow: var(--small-box-shadow);
+    border-radius: 5px;
+}
+
+/* Recipes */
+
+.card {
+    height: 90%;
+    margin-top: 1rem;
+}
+
+.card:hover {
+    box-shadow: var(--small-box-shadow);
+    cursor: pointer;
+}
+
+.card-img-top {
+    height: 15rem !important;
+}
+
+.recipes {
+    color: var(--black) !important;
+    text-decoration: none !important; 
+}
+
+.recipes:hover {
+    cursor: pointer;
 }
