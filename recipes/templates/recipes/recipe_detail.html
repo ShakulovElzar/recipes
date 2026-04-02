@@ -15,7 +15,7 @@
 		<div class="recipe-detail p-5">
 			<h1 class="text-center">{{ recipe.title }}</h1>
 			<p class="text-center">
-				Posted by {{ recipe.user }} on {{ recipe.posted_date }}
+				Posted by <a href="{% url 'profile' recipe.user.pk %}">{{ recipe.user }}</a> on {{ recipe.posted_date }}
 			</p>
 			<p class="text-center">
 				{{ recipe.views }} views and {{ recipe.likes.count }} likes

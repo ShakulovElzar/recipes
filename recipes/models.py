@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from djrichtextfield.models import RichTextField
 from django_resized import ResizedImageField
-from cloudinary_storage.storage import MediaCloudinaryStorage
 
 # Create your models here.
 
@@ -50,7 +49,6 @@ class Recipe(models.Model):
         force_format="WEBP",
         null=False,
         blank=False,
-        storage=MediaCloudinaryStorage(),
     )
     image_alt = models.CharField(max_length=100, null=False, blank=False)
     meal_type = models.CharField(max_length=50, choices=MEAL_TYPES, default="breakfast")
