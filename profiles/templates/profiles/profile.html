@@ -45,6 +45,19 @@
             <p style="color: var(--text-muted);">No recipes yet.</p>
             {% endfor %}
         </div>
+
+        <div class="profile-recipes">
+            <p class="section-label">Favorites ({{ favorites.count }})</p>
+            {% for recipe in favorites %}
+            <a href="{% url 'recipe_detail' recipe.id %}" class="d-block mb-1">
+                <h3>{{ recipe.title }}</h3>
+            </a>
+            <p class="text-muted small">{{ recipe.posted_date|date:"F j, Y \a\t g:i A" }}</p>
+            <hr />
+            {% empty %}
+            <p style="color: var(--text-muted);">No favorites yet.</p>
+            {% endfor %}
+        </div>
     </div>
 
     <!-- Edit Profile Modal -->

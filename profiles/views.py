@@ -2,6 +2,7 @@ from django.views.generic import TemplateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import Profile
 from .forms import ProfileForm
+from recipes.models import Recipe
 
 
 class Profiles(TemplateView):
@@ -11,11 +12,13 @@ class Profiles(TemplateView):
 
     def get_context_data(self, **kwargs):
         profile = Profile.objects.get(user=self.kwargs["pk"])
+        favorite_recipes = Recipe.objects.filter(likes=profile.user).distinct()
+
         context = {
             "profile": profile,
             "form": ProfileForm(instance=profile),
+            "favorites": favorite_recipes,
         }
-
 
         return context
 
@@ -31,3 +34,4 @@ class EditProfile(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def test_func(self):
         return self.request.user == self.get_object().user
+

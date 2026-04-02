@@ -11,7 +11,7 @@
 
     <div class="d-flex justify-content-center flex-row flex-wrap gap-2">
         {% for recipe in recipes %}
-        <a class="recipes" href="{% url 'recipe_detail' recipe.id %}" aria-label="Click to view {{ recipe.title }}" style="width: 18rem;">
+        <a class="recipes" href="{% url 'recipe_detail' recipe.id %}" aria-label="Click to view {{ recipe.title }}" style="width: 25rem;">
             <div class="card">
                 <img
                     src="{{ recipe.image.url }}"
@@ -28,6 +28,42 @@
         </a>
         {% endfor %}
     </div>
+
+    <nav aria-label="Recipe page navigation" class="mt-5">
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Previous</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">Previous</span>
+            </li>
+            {% endif %}
+
+            {% for num in paginator.page_range %}
+                {% if num == page_obj.number %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                {% elif num >= page_obj.number|add:'-2' and num <= page_obj.number|add:'2' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Next</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">Next</span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
 </div>
 
 {% endblock %}
