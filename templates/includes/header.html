@@ -19,11 +19,10 @@
         <li class="nav-item">
           <a class="nav-link {% if url_name == 'add_recipe'%} active {% endif %}" href="{% url 'add_recipe' %}">New</a>
         </li>
-         <form class="d-flex" role="search">
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
-          <button class="btn btn-outline-primary" type="submit">Search</button>
-        </form>
        {% if request.user.is_authenticated %}
+       <li class="nav-item">
+          <a class="nav-link {% if url_name == 'profile'%} active {% endif %}" aria-disabled="true" href="{% url 'profile' request.user.id %}">Profile</a>
+        </li>
         <li class="nav-item">
           <a class="nav-link {% if url_name == 'accounts_logout'%} active {% endif %}" aria-disabled="true" href="/accounts/logout">Logout</a>
         </li>
@@ -37,6 +36,11 @@
         {% endif %}
       </ul>
      
+      <form method="get" class="d-flex" role="search" action="{% url 'recipes' %}">
+          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="q"/>
+          <button class="btn btn-outline-primary" type="submit">Search</button>
+      </form>
+
     </div>
   </div>
 </nav>

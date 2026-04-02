@@ -8,13 +8,22 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('recipes', '0001_initial'),
+        ("recipes", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='recipe',
-            name='image',
-            field=django_resized.forms.ResizedImageField(crop=None, force_format='WEBP', keep_meta=True, quality=75, scale=None, size=[400, None], storage=cloudinary_storage.storage.MediaCloudinaryStorage(), upload_to='recipes/'),
+            model_name="recipe",
+            name="image",
+            field=django_resized.forms.ResizedImageField(
+                crop=None,
+                force_format="WEBP",
+                keep_meta=True,
+                quality=75,
+                scale=None,
+                size=[400, None],
+                storage=cloudinary_storage.storage.MediaCloudinaryStorage(),
+                upload_to="recipes/",
+            ),
         ),
     ]
