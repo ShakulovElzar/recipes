@@ -1,76 +1,127 @@
 {% extends 'base.html' %} 
-{% block title %} Recipe Detail - {{ recipe.title }} {% endblock %} 
+{% block title %} {{ recipe.title }} {% endblock %} 
 
 {% block content %}
 
-<div class="container">
-	<div class="recipe-info mt-3 p-1">
-		<div class="recipe-img">
-			<img
-				src="{{ recipe.image.url }}"
-				alt="{{ recipe.image_alt }}"
-				class="recipe-pic"
-			/>
-		</div>
-		<div class="recipe-detail p-5">
-			<h1 class="text-center">{{ recipe.title }}</h1>
-			<p class="text-center">
-				Posted by <a href="{% url 'profile' recipe.user.pk %}">{{ recipe.user }}</a> on {{ recipe.posted_date }}
-			</p>
-			<p class="text-center">
-				{{ recipe.views }} views and {{ recipe.likes.count }} likes
-			</p>
-			<hr />
-            <p><strong>Description:</strong> {{ recipe.description|safe }}</p>
-			<p><strong>Calories:</strong> {{ recipe.calories }}</p>
-			<p>
-				<strong>Cuisine:</strong> {{ recipe.get_cuisine_type_display }}
-			</p>
+<div class="container py-4">
+    <div class="recipe-info mt-2" style="border: var(--border); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-md);">
+        <div class="recipe-img">
+            <img
+                src="{{ recipe.image.url }}"
+                alt="{{ recipe.image_alt }}"
+                class="recipe-pic"
+            />
+        </div>
+        <div class="recipe-detail p-4 p-lg-5">
+            <span class="meta-chip">{{ recipe.get_cuisine_type_display }}</span>
+            <h1 class="mt-3" style="font-style: italic;">{{ recipe.title }}</h1>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">
+                Posted by <strong><a href="{% url 'profile' recipe.user.pk %}">{{ recipe.user }}</a></strong> &middot; {{ recipe.posted_date }}
+            </p>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">
+                {{ recipe.views }} views &middot; {{ recipe.likes.count }} likes
+            </p>
+            <hr />
+            <p style="font-size: 0.95rem; line-height: 1.7;">{{ recipe.description|safe }}</p>
+            <p>
+                <span style="font-size: 0.75rem; font-weight:500; text-transform:uppercase; letter-spacing:0.06em; color: var(--text-muted);">Calories</span><br>
+                <strong>{{ recipe.calories }} kcal</strong>
+            </p>
 
-			{% if request.user.is_authenticated and request.user != recipe.user %}
-			<form
-				method="post"
-				action="{% url 'like_recipe' recipe.pk %}"
-			>
-				{% csrf_token %}
-				<button type="submit" class="btn btn-outline-primary">
-					{% if request.user in recipe.likes.all %} Unlike {% else %} Like
-					{% endif %}
-				</button>
-			</form>
-			{% endif %}
+            {% if request.user.is_authenticated and request.user != recipe.user %}
+            <form method="post" action="{% url 'like_recipe' recipe.pk %}" class="mt-2">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-primary btn-sm">
+                    {% if request.user in recipe.likes.all %}♥ Unlike{% else %}♡ Like{% endif %}
+                </button>
+            </form>
+            {% endif %}
 
-			{% if request.user == recipe.user %}
+            {% if request.user == recipe.user %}
+            <div class="d-flex gap-2 mt-3">
+                <a href="{% url 'edit_recipe' recipe.id %}" class="btn btn-primary">Edit</a>
+                <a href="{% url 'delete_recipe' recipe.id %}" class="btn btn-danger">Delete</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
 
-			<div class="text-center">
-				<a
-					href="{% url 'edit_recipe' recipe.id %}"
-					class="btn btn-primary w-25"
-				>
-					Edit
-				</a>
-				<a
-					href="{% url 'delete_recipe' recipe.id %}"
-					class="btn btn-danger w-25"
-				>
-					Delete
-				</a>
-			</div>
+    <div class="recipe-container mt-4">
+        <div class="ingredients">
+            <h2>Ingredients</h2>
+            <div style="font-size: 0.95rem; line-height: 1.8;">{{ recipe.ingredients|safe }}</div>
+        </div>
+        <div class="instructions">
+            <h2>Instructions</h2>
+            <div style="font-size: 0.95rem; line-height: 1.85;">{{ recipe.instructions|safe }}</div>
+        </div>
+    </div>
 
-			{% endif %}
-		</div>
-	</div>
+	<!-- COMMENTS -->
+    <div class="mt-4 p-4 p-lg-5" style="border: var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); background: var(--surface, #fff);">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="mb-0">Comments</h2>
+            <span class="meta-chip">{{ comments|length }} comment{{ comments|length|pluralize }}</span>
+        </div>
 
-	<div class="recipe-container">
-		<div class="ingredients p-3">
-			<h2>Ingredients</h2>
-			<p>{{ recipe.ingredients|safe }}</p>
-		</div>
-		<div class="instructions p-3">
-			<h2>Instructions</h2>
-			<p>{{ recipe.instructions|safe }}</p>
-		</div>
-	</div>
+        {% if request.user.is_authenticated %}
+        <form method="post" class="mb-4">
+            {% csrf_token %}
+            <div>
+                <label for="{{ comment_form.body.id_for_label }}" 
+                       style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 0.5rem; display: inline-block;">
+                    Add a comment
+                </label>
+                {{ comment_form.body }}
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm mt-3">Post Comment</button>
+        </form>
+        {% else %}
+        <div style="border: var(--border); border-radius: var(--radius-md); padding: 1rem; background: var(--surface-muted, rgba(0,0,0,0.02));">
+            <p class="mb-0" style="color: var(--text-muted); font-size: 0.95rem;">
+                You must be logged in to leave a comment.
+            </p>
+        </div>
+        {% endif %}
+
+        {% if comments %}
+            <div class="d-flex flex-column gap-3">
+                {% for comment in comments %}
+                <div style="border: var(--border); border-radius: var(--radius-md); padding: 1rem 1.1rem; background: var(--surface-muted, rgba(0,0,0,0.02));">
+                    <div class="d-flex justify-content-between align-items-start gap-3">
+                        <div>
+                            <p class="mb-1" style="font-size: 0.95rem;">
+                                <strong>
+                                    <a href="{% url 'profile' comment.user.pk %}">{{ comment.user.username }}</a>
+                                </strong>
+                            </p>
+                            <p class="mb-2" style="font-size: 0.8rem; color: var(--text-muted);">
+                                {{ comment.created_on }}
+                            </p>
+                        </div>
+
+                        {% if request.user == comment.user or request.user.is_superuser %}
+                        <form method="post" action="{% url 'delete_comment' comment.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                        </form>
+                        {% endif %}
+                    </div>
+
+                    <div style="font-size: 0.95rem; line-height: 1.7; color: var(--text-color);">
+                        {{ comment.body|linebreaks }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div style="border: var(--border); border-radius: var(--radius-md); padding: 1rem; background: var(--surface-muted, rgba(0,0,0,0.02));">
+                <p class="mb-0" style="color: var(--text-muted); font-size: 0.95rem;">
+                    No comments yet. Be the first to comment.
+                </p>
+            </div>
+        {% endif %}
+    </div>
 </div>
 
 {% endblock %}

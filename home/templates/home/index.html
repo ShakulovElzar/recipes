@@ -4,25 +4,35 @@
 
 {% block content %}
 
-<div class="container flex-column pt-3">
-    <section class="text-center">
-        <h1 class="main-title mx-auto">Discover Delicious Recipes and Meal Planning space!</h1>
-        <p class="pt-4">
+<div class="container py-5">
+    <section class="text-center mb-5">
+        <p class="section-label justify-content-center" style="letter-spacing:0.14em; color: var(--sage); font-size:0.7rem;">
+            Recipe Sharing &amp; Meal Planning
+        </p>
+        <h1 class="main-title mx-auto" style="font-style: italic; font-size: clamp(2.4rem, 6vw, 4rem); line-height: 1.1;">
+            Discover Delicious Recipes
+        </h1>
+        <p class="pt-3 mx-auto" style="max-width: 38rem; color: var(--text-muted); font-size: 1.05rem;">
             Find tasty recipes, plan your meals with ease, and discover new dishes in just a few clicks.
         </p>
+        <div class="mt-4 d-flex gap-3 justify-content-center flex-wrap">
+            <a href="{% url 'recipes' %}" class="btn btn-primary px-4">Browse Recipes</a>
+            <a href="{% url 'add_recipe' %}" class="btn btn-outline-primary px-4">Share a Recipe</a>
+        </div>
     </section>
+
     <section>
-        <div class="recipe-cont pt-5 d-flex flex-wrap justify-content-center">
+        <p class="section-label">Most Popular</p>
+        <div class="recipe-cont pt-2 d-flex flex-wrap justify-content-center">
             {% for recipe in recipes %}
             <a href="{% url 'recipe_detail' recipe.pk %}" class="img-container">
-                <img src="{{ recipe.image.url }}" alt="{{ recipe.image_alt }}" style="width: 100%" />
-                <div class="centered text-center">
+                <img src="{{ recipe.image.url }}" alt="{{ recipe.image_alt }}" />
+                <div class="centered">
                     <h2>{{ recipe.title }}</h2>
                 </div>
             </a>
             {% endfor %}
         </div>
-        <p class="text-center pt-1">Explore Our Most Popular Recipes</p>
     </section>
 </div>
 

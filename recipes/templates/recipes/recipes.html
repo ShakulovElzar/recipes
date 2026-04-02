@@ -2,29 +2,32 @@
 {% block title %}Recipes{% endblock %} 
 
 {% block content %}
-<h1 class="text-center p-2">Latest Recipes</h1>
-<div class="container d-flex justify-content-center flex-row flex-wrap">
-	{% for recipe in recipes %}
-	<a class="recipes" href="{% url 'recipe_detail' recipe.id %}" aria-label="Click to view {{recipe.title}}">
-		<div
-			class="card m-3"
-			style="width: 18rem"
-		>
-			<img
-				src="{{recipe.image.url}}"
-				class="card-img-top"
-				alt="{{recipe.image_alt}}"
-			/>
-			<div class="card-body">
-				<h2 class="card-title">{{recipe.title}}</h5>
-				<p class="card-text">
-					{{recipe.description|truncatechars:100}}
-                    {% if recipe.description|length > 100 %}...{% endif %}
-				</p>
-			</div>
-		</div>
-	</a>
-	{% endfor %}
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 style="font-style: italic;">Latest Recipes</h1>
+        <p style="color: var(--text-muted);">Fresh additions from our community</p>
+    </div>
+
+    <div class="d-flex justify-content-center flex-row flex-wrap gap-2">
+        {% for recipe in recipes %}
+        <a class="recipes" href="{% url 'recipe_detail' recipe.id %}" aria-label="Click to view {{ recipe.title }}" style="width: 18rem;">
+            <div class="card">
+                <img
+                    src="{{ recipe.image.url }}"
+                    class="card-img-top"
+                    alt="{{ recipe.image_alt }}"
+                />
+                <div class="card-body">
+                    <h2 class="card-title">{{ recipe.title }}</h2>
+                    <p class="card-text">
+                        {{ recipe.description|truncatechars:100 }}
+                    </p>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
 </div>
 
 {% endblock %}

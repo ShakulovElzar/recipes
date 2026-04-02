@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.urls import reverse
 from django.views import View
 from django.views.generic import CreateView, ListView, DetailView, DeleteView, UpdateView
@@ -5,8 +6,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect
 from django.db.models import Q
 
-from .models import Recipe
-from .forms import RecipeForm
+from .models import Recipe, Comment
+from .forms import CommentForm, RecipeForm
 
 class Recipes(ListView):
     """Recipes view"""
@@ -22,7 +23,9 @@ class Recipes(ListView):
                 Q(title__icontains=query) | 
                 Q(description__icontains=query) |
                 Q(instructions__icontains=query) |
-                Q(cuisine_type__icontains=query) 
+                Q(cuisine_type__icontains=query) |
+                Q(ingredients__icontains=query) | 
+                Q(meal_type__icontains=query) 
             )
         else: 
             recipes = self.model.objects.all()
@@ -35,12 +38,50 @@ class RecipeDetail(DetailView):
     model = Recipe
     context_object_name = "recipe"
 
-    def get_object(self, queryset=None):
-        recipe = super().get_object(queryset)
-        recipe.views += 1
-        recipe.save()
-        return recipe
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.views += 1
+        self.object.save()
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["comments"] = self.object.comments.all()
+        context["comment_form"] = CommentForm()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+        if not request.user.is_authenticated:
+            messages.error(request, "You must be logged in to post a comment.")
+            return redirect("account_login")
+
+        form = CommentForm(request.POST)
+
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.recipe = self.object
+            comment.user = request.user
+            comment.save()
+            messages.success(request, "Your comment was added successfully.")
+        else:
+            messages.error(request, "There was a problem with your comment.")
+
+        return redirect("recipe_detail", pk=self.object.pk)
+
+class DeleteComment(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    """Delete a comment"""
+
+    model = Comment
+
+    def get_success_url(self):
+        return reverse("recipe_detail", kwargs={"pk": self.object.recipe.pk})
+
+    def test_func(self):
+        comment = self.get_object()
+        return self.request.user == comment.user or self.request.user.is_superuser
 
 class AddRecipe(LoginRequiredMixin, CreateView):
     """Add recipe view"""
@@ -92,3 +133,4 @@ class LikeRecipe(LoginRequiredMixin, UserPassesTestMixin, View):
             recipe.likes.add(request.user)
 
         return redirect("recipe_detail", pk=recipe.pk)
+    

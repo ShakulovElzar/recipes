@@ -2,47 +2,49 @@
 
 <header>
     {% with request.resolver_match.url_name as url_name %}
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#"><img src="{% static 'images/logo.png' %}" alt="Logo" class="logo"/></a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav me-auto mb-2">
-        <li class="nav-item">
-          <a class="nav-link {% if url_name == 'home' %} active {% endif %}" aria-current="page" href="{% url 'home' %}">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link {% if url_name == 'recipes'%} active {% endif %}" href="{% url 'recipes' %}">Recipes</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link {% if url_name == 'add_recipe'%} active {% endif %}" href="{% url 'add_recipe' %}">New</a>
-        </li>
-       {% if request.user.is_authenticated %}
-       <li class="nav-item">
-          <a class="nav-link {% if url_name == 'profile'%} active {% endif %}" aria-disabled="true" href="{% url 'profile' request.user.id %}">Profile</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link {% if url_name == 'accounts_logout'%} active {% endif %}" aria-disabled="true" href="/accounts/logout">Logout</a>
-        </li>
-        {% else %}
-        <li class="nav-item">
-          <a class="nav-link {% if url_name == 'accounts_signup'%} active {% endif %}" aria-disabled="true" href="/accounts/signup">Register</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link {% if url_name == 'accounts_login'%} active {% endif %}" aria-disabled="true" href="/accounts/login">Sign In</a>
-        </li>
-        {% endif %}
-      </ul>
-     
-      <form method="get" class="d-flex" role="search" action="{% url 'recipes' %}">
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="q"/>
-          <button class="btn btn-outline-primary" type="submit">Search</button>
-      </form>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid px-3 px-md-4">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo"/>
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-3 gap-1">
+                    <li class="nav-item">
+                        <a class="nav-link {% if url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if url_name == 'recipes' %}active{% endif %}" href="{% url 'recipes' %}">Recipes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if url_name == 'add_recipe' %}active{% endif %}" href="{% url 'add_recipe' %}">New Recipe</a>
+                    </li>
+                    {% if request.user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if url_name == 'profile' %}active{% endif %}" href="{% url 'profile' request.user.id %}">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if url_name == 'accounts_logout' %}active{% endif %}" href="/accounts/logout">Logout</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if url_name == 'accounts_signup' %}active{% endif %}" href="/accounts/signup">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if url_name == 'accounts_login' %}active{% endif %}" href="/accounts/login">Sign In</a>
+                    </li>
+                    {% endif %}
+                </ul>
 
-    </div>
-  </div>
-</nav>
+                <form method="get" class="d-flex align-items-center gap-0" role="search" action="{% url 'recipes' %}">
+                    <input class="form-control" type="search" placeholder="Search recipes…" aria-label="Search" name="q"/>
+                    <button class="btn btn-outline-primary" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+    </nav>
     {% endwith %}
 </header>

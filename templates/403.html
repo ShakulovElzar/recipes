@@ -1,13 +1,16 @@
 {% extends 'base.html' %}
 
-{% block title %}Delete Recipe{% endblock %}
+{% block title %}Unauthorized{% endblock %}
 
 {% block content %}
 
-<div class="text-center">
-    <h1 class="p-5">403 - Unauthorized access</h1>
-    <p>You're not authorized to perform this action.</p>
-    <a href="{% url 'home' %}" class="btn btn-primary w-25">Home</a>
+<div class="container py-5 text-center">
+    <p style="font-family: var(--mono-font); font-size: 4rem; color: var(--mint); font-weight: 400; margin: 0;">403</p>
+    <h1 style="font-style: italic; margin-top: 0;">Unauthorized Access</h1>
+    <p class="mt-3" style="color: var(--text-muted); max-width: 28rem; margin: 1rem auto;">
+        You're not authorized to perform this action. Please sign in with the correct account.
+    </p>
+    <a href="{% url 'home' %}" class="btn btn-primary mt-3 px-5">Back to Home</a>
 </div>
 
 {% endblock %}

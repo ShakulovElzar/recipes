@@ -1,43 +1,50 @@
 {% extends 'base.html' %}
 
-{% block title %}Create Meal Plan{% endblock %}
+{% block title %}Choose {{ meal_type|title }}{% endblock %}
 
 {% block content %}
-    <div class="container">
-        <div class="text-center">
-            <h1 class="pt-2"> Choose a {{ meal_type|title }}</h1>
-            <p>{{ meal_date }}</p>
-        </div>
-
-        <form method="get" class="form d-flex flex-column p-4">
-            {% csrf_token %}
-            <label for="calories">
-                Calories
-            </label>
-            <input type="number" name="calories" class="form-control mb-2" value="{{ request.GET.calories }}" placeholder="Max calories">
-            <label for="search">
-                Keyword
-            </label>
-            <input type="text" name="search" class="form-control mb-2" value="{{ request.GET.search }}" placeholder="Asian, Pie, Chicken...">
-
-            <button type="submit" class="btn btn-primary mt-3">Find Random Recipe</button>
-
-        </form>
-
-        {% if recipe %}
-        <div class="form">
-            <a class="recipes" href="{% url 'recipe_detail' recipe.id %}">
-                <img src="{{ recipe.image.url }}" alt="{{ recipe.image.alt }}" class="card-img-top">
-                <h2 class="text-center">{{ recipe.title }}</h2>
-                <p class="card-text p-2">{{ recipe.description }}</p>
-            </a>
-            <form method="post" action="{% url 'add_meal' meal_date meal_type recipe.pk %}">
-                {% csrf_token %}
-                <div class="text-center">
-                    <button type="submit" class="btn btn-primary m-3">Add Meal</button>
-                </div>
-            </form>
-        </div>
-        {% endif %}
+<div class="container py-5">
+    <div class="text-center mb-4">
+        <p class="section-label justify-content-center" style="color: var(--sage);">{{ meal_date }}</p>
+        <h1 style="font-style: italic;">Choose a {{ meal_type|title }}</h1>
     </div>
+
+    <div class="form p-4 p-md-5">
+        <form method="get" class="d-flex flex-column gap-3">
+            {% csrf_token %}
+            <div>
+                <label for="calories">Max Calories</label>
+                <input type="number" id="calories" name="calories" class="form-control"
+                    value="{{ request.GET.calories }}" placeholder="e.g. 600">
+            </div>
+            <div>
+                <label for="search">Keyword</label>
+                <input type="text" id="search" name="search" class="form-control"
+                    value="{{ request.GET.search }}" placeholder="Asian, Chicken, Pie…">
+            </div>
+            <div class="text-center mt-2">
+                <button type="submit" class="btn btn-primary px-5">Find Recipe</button>
+            </div>
+        </form>
+    </div>
+
+    {% if recipe %}
+    <div class="form mt-4 overflow-hidden p-0">
+        <a class="recipes d-block" href="{% url 'recipe_detail' recipe.id %}">
+            <img src="{{ recipe.image.url }}" alt="{{ recipe.title }}"
+                style="width: 100%; height: 14rem; object-fit: cover; display: block;">
+            <div class="p-4">
+                <h2 class="text-center" style="font-style: italic;">{{ recipe.title }}</h2>
+                <p class="text-center" style="color: var(--text-muted); font-size: 0.9rem;">{{ recipe.description }}</p>
+            </div>
+        </a>
+        <form method="post" action="{% url 'add_meal' meal_date meal_type recipe.pk %}">
+            {% csrf_token %}
+            <div class="text-center pb-4">
+                <button type="submit" class="btn btn-primary px-5">Add to Meal Plan</button>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+</div>
 {% endblock %}

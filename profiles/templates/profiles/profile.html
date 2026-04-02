@@ -1,70 +1,64 @@
-{% extends "base.html" %} {% load static %} {% block title %}Profile - {{
-profile.user.username }}{% endblock %} {% block content %}
+{% extends "base.html" %} {% load static %} {% block title %}Profile - {{ profile.user.username }}{% endblock %} {% block content %}
 
-<div class="container p-4">
+<div class="container py-5">
     <div class="profile">
+
         <div class="info">
-            <div class="profile-img text-center">
+            <div class="profile-img">
                 {% if profile.image %}
                 <img src="{{ profile.image.url }}" alt="{{ profile.user.username }}'s profile picture" />
                 {% else %}
                 <img src="{% static 'images/no-profile-picture-icon.png' %}" alt="Default Profile Image" />
                 {% endif %}
             </div>
-            <h1>{{ profile.user.username }}</h1>
-            <p>
-                <strong>Joined:</strong> {{ profile.user.date_joined|date:"M d, Y" }}
+            <h2 style="margin-bottom: 0.25rem;">{{ profile.user.username }}</h2>
+            <p style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em;">
+                Member since {{ profile.user.date_joined|date:"M Y" }}
             </p>
-            <p>
-                <strong>Recipes:</strong> {{ profile.user.recipe_owner.count }}
-            </p>
-            {% if profile.bio is not none %} {{ profile.bio|safe }} {% endif %}
+            <span class="meta-chip" style="font-size:0.75rem;">
+                {{ profile.user.recipe_owner.count }} Recipes
+            </span>
+
+            {% if profile.bio is not none %}
+            <div class="mt-3" style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.6;">
+                {{ profile.bio|safe }}
+            </div>
+            {% endif %}
 
             {% if request.user == profile.user %}
-
-            <div>
-                <button id="myBtn" class="btn btn-primary w-25 mb-4">
-                    Edit
-                </button>
+            <div class="mt-4 d-flex flex-column gap-2 align-items-center">
+                <button id="myBtn" class="btn btn-primary w-75">Edit Profile</button>
+                <a href="{% url 'meal_planner' %}" class="btn btn-outline-primary w-75">My Meal Plan</a>
             </div>
-
-            <div>
-                <a href="{% url 'meal_planner' %}" class="btn btn-primary w-25 mb-4">
-                    Meals
-                </a>
-            </div>
-
             {% endif %}
         </div>
+
         <div class="profile-recipes">
-            <h2 class="text-center pb-4">Latest Recipes</h2>
+            <p class="section-label">Recipes by {{ profile.user.username }}</p>
             {% for recipe in profile.user.recipe_owner.all %}
-            <a href="{% url 'recipe_detail' recipe.id %}" class="mb-3 text-decoration-none text-dark">
+            <a href="{% url 'recipe_detail' recipe.id %}" class="d-block mb-1">
                 <h3>{{ recipe.title }}</h3>
             </a>
-            <p class="text-muted small">
-                Posted:
-                {{ recipe.posted_date|date:"F j, Y \a\t g:i A" }}
-            </p>
+            <p class="text-muted small">{{ recipe.posted_date|date:"F j, Y \a\t g:i A" }}</p>
             <hr />
+            {% empty %}
+            <p style="color: var(--text-muted);">No recipes yet.</p>
             {% endfor %}
         </div>
     </div>
 
-    <div id="myModal" class="modal mt-5">
-        <!-- Modal content -->
+    <!-- Edit Profile Modal -->
+    <div id="myModal" class="modal">
         <div class="modal-content">
-            <span class="close fs-1 pe-2">&times;</span>
-            <form method="post" action="{% url 'edit_profile' request.user.id %}" class="mb-2 p-2"
-                enctype="multipart/form-data">
-                <h2 class="text-center fs-4">Edit Profile</h2>
+            <span class="close">&times;</span>
+            <h2 class="text-center mb-3" style="font-size: 1.4rem;">Edit Profile</h2>
+            <form method="post" action="{% url 'edit_profile' request.user.id %}" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form|crispy }}
                 {{ form.media }}
-                <div class="d-flex justify-content-center">
-                    <button type="submit" class="btn btn-primary w-25 mb-4">
-                        Save
-                    </button>
+                <div class="text-center mt-3">
+                    <button type="submit" class="btn btn-primary px-4">Save Changes</button>
+                </div>
             </form>
         </div>
     </div>
@@ -75,30 +69,11 @@ profile.user.username }}{% endblock %} {% block content %}
 {% block extra_js %}
 {{ block.super }}
 <script>
-    // Get the modal
     const modal = document.getElementById("myModal");
-
-    // Get the button that opens the modal
-    const btn = document.getElementById("myBtn");
-
-    // Get the <span> element that closes the modal
-    const span = document.getElementsByClassName("close")[0];
-
-    // When the user clicks on the button, open the modal
-    btn.onclick = function () {
-        modal.style.display = "block";
-    }
-
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function () {
-        modal.style.display = "none";
-    }
-
-    // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function (event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    }
+    const btn   = document.getElementById("myBtn");
+    const span  = document.getElementsByClassName("close")[0];
+    btn.onclick  = () => modal.style.display = "block";
+    span.onclick = () => modal.style.display = "none";
+    window.onclick = (e) => { if (e.target === modal) modal.style.display = "none"; }
 </script>
 {% endblock %}

@@ -4,16 +4,19 @@
 
 {% block content %}
 
-<div class="container">
-    <form method="post" enctype="multipart/form-data" class="p-4 form">
-        <h1 class="text-center">Edit Recipe</h1>
-        {% csrf_token %}
-        {{ form.media }}
-        {{ form|crispy }}
-        <div class="text-center">
-            <button type="submit" class="btn btn-primary mt-2">Save changes</button>
-        </div>
-    </form>
+<div class="container py-4">
+    <div class="form p-4 p-md-5">
+        <p class="section-label text-center justify-content-center" style="color: var(--sage);">Make it better</p>
+        <h1 class="text-center mb-4" style="font-style: italic;">Edit Recipe</h1>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.media }}
+            {{ form|crispy }}
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary px-5">Save Changes</button>
+            </div>
+        </form>
+    </div>
 </div>
 
 {% endblock %}
